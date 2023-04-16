@@ -32,16 +32,16 @@ class GameSprite(pygame.sprite.Sprite):
 
 
 class Controller:
-    def __init__(self, obj, k_up, k_down):
+    def __init__(self,  k_up, k_down, obj):
         self.obj = obj
         self.k_up = k_up
         self.k_down = k_down
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[self.k_up]:
+        if keys[self.k_up] and self.obj.rect.y>0:
             self.obj.rect.y -= 5
-        if keys[self.k_down]:
+        if keys[self.k_down] and self.obj.rect.y<500-self.obj.rect.height:
             self.obj.rect.y += 5
 
 
@@ -52,7 +52,8 @@ game = True
 class Player(GameSprite):
     def __init__(self, img, x, y, width, height, k_up, k_down, rotation=None):
         super().__init__(img, x, y, width, height, rotation)
-        self.controller = Controller(self, k_up, k_down)
+        self.controller = Controller(k_up, k_down, self)
+        self.score = 0
 
     def reset(self):
         super().reset()
@@ -63,15 +64,74 @@ player1 = Player("imgs/platform.png", 30, 0, 100, 25, pygame.K_UP, pygame.K_DOWN
 player2 = Player("imgs/platform.png", 730, 0, 100, 25, pygame.K_w, pygame.K_s, 90)
 
 
+#відобразити картинку і прямокутник
+#Постійний рух
+
+ball = GameSprite("imgs/tenis_ball.png", 400, 250, 50,50)
+dx = 3
+dy = -3
+
+win_variant = 2
+
+
+score_font = pygame.font.Font(None, 35)
 
 
 while game:
 
+    score = f"{player1.score}:{player2.score}"
+    score_text = score_font.render(score, True, (0,0,0))
+
+
     window.fill(background_color)
     player1.reset()
     player2.reset()
+    ball.reset()
+    window.blit(score_text, (380, 30))
+
+    if ball.rect.y >500-ball.rect.width or ball.rect.y <0:
+        dy *= -1
+
+    if ball.rect.x >800-ball.rect.width:
+        player1.score+=1
+        print(player1.score)
 
 
+        if win_variant==1:
+            dx*=-1
+
+
+        if win_variant==2:
+            ball.rect.x = 400
+            ball.rect.y = 250
+
+    if ball.rect.x <0:
+        player2.score+=1
+        print(player2.score)
+
+        if win_variant==1:
+            dx*=-1
+
+
+        if win_variant==2:
+            ball.rect.x = 400
+            ball.rect.y = 250
+
+
+
+
+
+    if ball.rect.colliderect(player1):
+        dx *= -1
+        ball.rect.left = player1.rect.right
+
+
+    if ball.rect.colliderect(player2):
+        dx *= -1
+        ball.rect.right = player2.rect.left
+
+    ball.rect.x += dx
+    ball.rect.y += dy
 
     # window.blit(ball, (0,0))
     for e in pygame.event.get():
