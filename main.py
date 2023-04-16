@@ -59,8 +59,8 @@ class Player(GameSprite):
         self.controller.update()
 
 
-player1 = Player("imgs/platform.png", 0, 0, 100, 25, pygame.K_UP, pygame.K_DOWN,  90)
-player2 = Player("imgs/platform.png", 300, 0, 100, 25, pygame.K_w, pygame.K_s)
+player1 = Player("imgs/platform.png", 30, 0, 100, 25, pygame.K_UP, pygame.K_DOWN,  90)
+player2 = Player("imgs/platform.png", 730, 0, 100, 25, pygame.K_w, pygame.K_s, 90)
 
 
 
