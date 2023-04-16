@@ -77,67 +77,93 @@ win_variant = 2
 score_font = pygame.font.Font(None, 35)
 
 
+is_menu = True
 while game:
 
     score = f"{player1.score}:{player2.score}"
     score_text = score_font.render(score, True, (0,0,0))
 
-
-    window.fill(background_color)
-    player1.reset()
-    player2.reset()
-    ball.reset()
-    window.blit(score_text, (380, 30))
-
-    if ball.rect.y >500-ball.rect.width or ball.rect.y <0:
-        dy *= -1
-
-    if ball.rect.x >800-ball.rect.width:
-        player1.score+=1
-        print(player1.score)
-
-
-        if win_variant==1:
-            dx*=-1
-
-
-        if win_variant==2:
-            ball.rect.x = 400
-            ball.rect.y = 250
-
-    if ball.rect.x <0:
-        player2.score+=1
-        print(player2.score)
-
-        if win_variant==1:
-            dx*=-1
-
-
-        if win_variant==2:
-            ball.rect.x = 400
-            ball.rect.y = 250
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_F1]:
+        win_variant=1
+    if keys[pygame.K_F2]:
+        win_variant=2
 
 
 
 
-
-    if ball.rect.colliderect(player1):
-        dx *= -1
-        ball.rect.left = player1.rect.right
-
-
-    if ball.rect.colliderect(player2):
-        dx *= -1
-        ball.rect.right = player2.rect.left
-
-    ball.rect.x += dx
-    ball.rect.y += dy
-
-    # window.blit(ball, (0,0))
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             game = False
-    keys = pygame.key.get_pressed()
+
+
+    if is_menu:
+        text = score_font.render("Prey any key to continue", True, (0,0,0))
+        text2 = score_font.render("F1 to v1, F2 to v2", True, (0, 0, 0))
+        window.blit(text, (300, 250))
+        window.blit(text2, (300, 290))
+        keys = pygame.key.get_pressed()
+        if True in keys and not keys[pygame.K_ESCAPE]:
+            is_menu=False
+
+
+    else:
+        window.fill(background_color)
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_ESCAPE]:
+            is_menu = True
+
+        player1.reset()
+        player2.reset()
+        ball.reset()
+        window.blit(score_text, (380, 30))
+
+        if ball.rect.y >500-ball.rect.width or ball.rect.y <0:
+            dy *= -1
+
+        if ball.rect.x >800-ball.rect.width:
+            player1.score+=1
+            print(player1.score)
+
+
+            if win_variant==1:
+                dx*=-1
+
+
+            if win_variant==2:
+                ball.rect.x = 400
+                ball.rect.y = 250
+
+        if ball.rect.x <0:
+            player2.score+=1
+            print(player2.score)
+
+            if win_variant==1:
+                dx*=-1
+
+
+            if win_variant==2:
+                ball.rect.x = 400
+                ball.rect.y = 250
+
+
+
+
+
+        if ball.rect.colliderect(player1):
+            dx *= -1
+            ball.rect.left = player1.rect.right
+
+
+        if ball.rect.colliderect(player2):
+            dx *= -1
+            ball.rect.right = player2.rect.left
+
+        ball.rect.x += dx
+        ball.rect.y += dy
+
+
 
     pygame.display.update()
     clock.tick(60)
